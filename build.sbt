@@ -18,10 +18,13 @@ ThisBuild / versionScheme    := Some("early-semver")
 val scalaForSbt1 = "2.12.21"
 val scalaForSbt2 = "3.8.4"
 
-val dynoxideCoreVersion = "0.8.1"
+val dynoxideScalaCoreVersion = "0.8.1"
+
+// Synced with github.com/nubo-db/dynoxide releases
+val dynoxideVersion = IO.read(file("dynoxide.version")).trim
 
 lazy val root = (project in file("."))
-  .enablePlugins(SbtPlugin)
+  .enablePlugins(SbtPlugin, BuildInfoPlugin)
   .settings(
     name                          := "sbt-dynoxide",
     sbtPlugin                     := true,
@@ -36,5 +39,8 @@ lazy val root = (project in file("."))
     scriptedBufferLog             := false,
     scriptedLaunchOpts += s"-Dplugin.version=${version.value}",
 
-    libraryDependencies += "com.hlag" %% "dynoxide-scala-core" % dynoxideCoreVersion,
+    libraryDependencies += "com.hlag" %% "dynoxide-scala-core" % dynoxideScalaCoreVersion,
+
+    buildInfoKeys    := Seq[BuildInfoKey]("dynoxideDefaultVersion" -> dynoxideVersion),
+    buildInfoPackage := "com.hlag.sbt.dynoxide",
   )
