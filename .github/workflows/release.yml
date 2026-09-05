@@ -1,0 +1,42 @@
+name: Release
+
+# Triggered when a draft released is "published" (not a draft anymore)
+on:
+  release:
+    types: [ published ]
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # to let sbt-dynver see the full history and all tags to derive the release version
+          fetch-depth: 0
+      - uses: sbt/setup-sbt@v1
+      - uses: coursier/cache-action@v8
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 17
+          check-latest: true
+
+      - name: Encode the PGP key for sbt-ci-release
+        env:
+          GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
+        run: |
+          # Convert ASCII-armored key (used by semantic-release-maven) to a single line sbt-ci-release base64-encoded requirement
+          encoded="$(printf '%s\n' "$GPG_SIGNING_KEY" | base64 -w0)"
+          echo "::add-mask::$encoded"
+          echo "PGP_SECRET=$encoded" >> "$GITHUB_ENV"
+
+      - name: Publish package
+        run: sbt 'clean;+Test/compile;ci-release'
+        env:
+          # env vars standard for sbt-ci-release/sbt-sonatype; PGP_SECRET comes from the step above
+          PGP_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          SONATYPE_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          SONATYPE_USERNAME: ${{ secrets.OSSRH_USERNAME }}

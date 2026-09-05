@@ -1,0 +1,47 @@
+name: Approve and auto-merge Scala Steward PRs
+
+# yamllint disable-line rule:truthy
+on: pull_request_target
+
+jobs:
+  approve-and-merge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: |
+      github.event.pull_request.user.login == 'generate-app-token-hl[bot]' &&
+      (contains(github.event.pull_request.labels.*.name, 'semver-patch') ||
+       contains(github.event.pull_request.labels.*.name, 'semver-minor'))
+    permissions:
+      pull-requests: write
+      contents: write
+    steps:
+      - name: Approve PR
+        uses: hmarr/auto-approve-action@f0939ea97e9205ef24d872e76833fa908a770363 # v4.0.0
+        with:
+          review-message: "Auto approve Scala Steward PR"
+          github-token: ${{ secrets.PAT_FOR_PR_AUTO_APPROVAL }}
+
+      - name: Get organization app token
+        id: app-token
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2.2.2
+        with:
+          app-id: ${{ vars.GET_TOKEN_APP_ID }}
+          private-key: ${{ secrets.GET_TOKEN_APP_PRIVATE_KEY }}
+
+      # Using a plain merge commit (not squash/rebase) preserves the original
+      # commit SHAs from Scala Steward, e.g. separate scalafmt-reformatting
+      # commits referenced by hash in .git-blame-ignore-revs
+      #
+      # NOTE: `gh pr merge --auto` only enables GitHub's deferred auto-merge
+      # queue, which does NOT seem to honor the App's Ruleset bypass
+      # permission when it eventually executes. Instead, wait for checks to
+      # finish and perform an immediate merge, which - like the "Bypass
+      # rules and merge" button in the UI - does honor bypass right away.
+      - name: Wait for checks and merge
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          gh pr checks "${{ github.event.pull_request.number }}" \
+            --repo "${{ github.repository }}" --watch --fail-fast --required
+          gh pr merge --merge "${{ github.event.pull_request.number }}" \
+            --repo "${{ github.repository }}"
