@@ -1,0 +1,29 @@
+target/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+project/target/
+.bsp/
+.metals/
+.bloop/
+.cache/
+sbt-cache/
+.history
+*.class
+*.log
+/project/.boot/
+/project/.sbtboot/
+
+### DynoxidePlugin runtime cache ###
+.dynoxide/
+
+### IntelliJ IDEA ###
+.idea/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
+.cleanup-trash/
