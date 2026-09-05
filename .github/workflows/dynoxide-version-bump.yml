@@ -1,0 +1,53 @@
+name: Bump Dynoxide binary version
+
+# Watches github.com/nubo-db/dynoxide releases (a plain GitHub-release-only binary, as it's not a Maven
+# artifact) which dependency bots do not handle
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  check-and-bump:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Get organization app token
+        id: app-token
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2.2.2
+        with:
+          app-id: ${{ vars.GET_TOKEN_APP_ID }}
+          private-key: ${{ secrets.GET_TOKEN_APP_PRIVATE_KEY }}
+
+      - name: Check latest nubo-db/dynoxide release
+        id: latest
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          current=$(cat dynoxide.version)
+          latest=$(gh api repos/nubo-db/dynoxide/releases/latest --jq .tag_name)
+          echo "current=$current" >> "$GITHUB_OUTPUT"
+          echo "latest=$latest" >> "$GITHUB_OUTPUT"
+
+      - name: Update dynoxide.version
+        if: steps.latest.outputs.current != steps.latest.outputs.latest
+        run: echo "${{ steps.latest.outputs.latest }}" > dynoxide.version
+
+      - name: Create pull request
+        if: steps.latest.outputs.current != steps.latest.outputs.latest
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          commit-message: "chore: bump Dynoxide version to ${{ steps.latest.outputs.latest }}"
+          title: "chore: bump Dynoxide version to ${{ steps.latest.outputs.latest }}"
+          body: |
+            Bumps the pinned [nubo-db/dynoxide](https://github.com/nubo-db/dynoxide) binary
+            version from `${{ steps.latest.outputs.current }}` to `${{ steps.latest.outputs.latest }}`.
+          branch: bump-dynoxide-version
+          labels: dependencies
+          delete-branch: true

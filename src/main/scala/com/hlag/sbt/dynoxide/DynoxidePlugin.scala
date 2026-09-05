@@ -36,7 +36,7 @@ import sbt.Keys.*
  */
 object DynoxidePlugin extends AutoPlugin {
 
-  private val DefaultVersion = "v0.13.0"
+  private val DefaultVersion = BuildInfo.dynoxideDefaultVersion
 
   object autoImport {
     val dynoxidePort: SettingKey[Int] =
