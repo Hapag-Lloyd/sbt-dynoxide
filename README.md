@@ -3,7 +3,7 @@
 sbt plugin: manages a [Dynoxide](https://github.com/nubo-db/dynoxide) DynamoDB emulator for
 integration tests. No Docker, no JVM, no npm.
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.hlag/sbt-dynoxide_sbt2_3.svg)](https://central.sonatype.com/artifact/com.hlag/sbt-dynoxide_sbt2_3)
+[![Maven Central](https://img.shields.io/maven-central/v/com.hlag/sbt-dynoxide.svg)](https://central.sonatype.com/artifact/com.hlag/sbt-dynoxide)
 [![CI](https://github.com/Hapag-Lloyd/sbt-dynoxide/actions/workflows/ci.yml/badge.svg)](https://github.com/Hapag-Lloyd/sbt-dynoxide/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![sbt](https://img.shields.io/badge/sbt-1.x%20%7C%202.x-informational)](#sbt-version-support)
@@ -15,7 +15,8 @@ integration tests. No Docker, no JVM, no npm.
 - Caches the binary locally under `.dynoxide/<version>/` — no re-download on later runs.
 - One Dynoxide process shared across subprojects, with reference counting so the first subproject to finish doesn't kill
   it while another still needs it.
-- Automatically starts before `test`/`testOnly` and stops when the owning subproject's tests finish.
+- Automatically starts before `test`/`testOnly` and stops after, only in subprojects with the
+  plugin enabled — other subprojects never trigger it.
 - Zero runtime dependencies — the plugin only uses the sbt API and the JDK (HTTP client, zip/tar extraction, process
   control).
 
@@ -42,7 +43,8 @@ lazy val integrationTests = project
   .enablePlugins(DynoxidePlugin)
 ```
 
-Point your test code's AWS SDK v2 `DynamoDbClient` at the emulator:
+Point your test code's AWS SDK v2 `DynamoDbClient` at the emulator. This snippet is minimal —
+you'll also need dummy credentials and a region, since the SDK requires both to be present:
 
 ```scala
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
@@ -52,6 +54,9 @@ val client = DynamoDbClient.builder()
   .endpointOverride(URI.create("http://localhost:8000"))
   .build()
 ```
+
+For IDE runs (bypassing `sbt test`), start/stop the emulator yourself; the plugin only hooks
+`sbt`'s `test`/`testOnly` tasks.
 
 ## Configuration / Keys
 
