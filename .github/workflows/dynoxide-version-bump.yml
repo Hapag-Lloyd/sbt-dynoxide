@@ -38,6 +38,11 @@ jobs:
         if: steps.latest.outputs.current != steps.latest.outputs.latest
         run: echo "${{ steps.latest.outputs.latest }}" > dynoxide.version
 
+      - name: Update README default version
+        if: steps.latest.outputs.current != steps.latest.outputs.latest
+        run: |
+          sed -i -E "s/(\`dynoxideVersion\` \| \`SettingKey\[String\]\` \| \`)[^\`]+(\`)/\1${{ steps.latest.outputs.latest }}\2/" README.md
+
       - name: Create pull request
         if: steps.latest.outputs.current != steps.latest.outputs.latest
         uses: peter-evans/create-pull-request@v7
