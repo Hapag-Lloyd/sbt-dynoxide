@@ -10,11 +10,14 @@ integration tests. No Docker, no JVM, no npm.
 
 ## Features
 
-- Auto-downloads the correct pre-built Dynoxide binary for your platform (macOS/Linux, arm64/x86_64) from GitHub Releases.
+- Auto-downloads the correct pre-built Dynoxide binary for your platform (macOS/Linux, arm64/x86_64) from GitHub
+  Releases.
 - Caches the binary locally under `.dynoxide/<version>/` — no re-download on later runs.
-- One Dynoxide process shared across subprojects, with reference counting so the first subproject to finish doesn't kill it while another still needs it.
+- One Dynoxide process shared across subprojects, with reference counting so the first subproject to finish doesn't kill
+  it while another still needs it.
 - Automatically starts before `test`/`testOnly` and stops when the owning subproject's tests finish.
-- Zero runtime dependencies — the plugin only uses the sbt API and the JDK (HTTP client, zip/tar extraction, process control).
+- Zero runtime dependencies — the plugin only uses the sbt API and the JDK (HTTP client, zip/tar extraction, process
+  control).
 
 ## Requirements
 
@@ -52,12 +55,12 @@ val client = DynamoDbClient.builder()
 
 ## Configuration / Keys
 
-| Key               | Type            | Default   | Description                                              |
-|-------------------|-----------------|-----------|------------------------------------------------------------|
-| `dynoxidePort`    | `SettingKey[Int]`    | `8000`    | Port the Dynoxide emulator listens on.                  |
-| `dynoxideVersion` | `SettingKey[String]` | `v0.13.0` | Dynoxide release version to download.                  |
-| `startDynoxide`   | `TaskKey[Unit]`      | —         | Downloads (if needed) and starts the emulator. Runs automatically before `test`/`testOnly`. |
-| `stopDynoxide`    | `TaskKey[Unit]`      | —         | Stops the emulator process explicitly.                 |
+| Key               | Type                 | Default  | Description                                                                                 |
+|-------------------|----------------------|----------|---------------------------------------------------------------------------------------------|
+| `dynoxidePort`    | `SettingKey[Int]`    | `8000`   | Port the Dynoxide emulator listens on.                                                      |
+| `dynoxideVersion` | `SettingKey[String]` | `v1.0.0` | Dynoxide release version to download.                                                       |
+| `startDynoxide`   | `TaskKey[Unit]`      | —        | Downloads (if needed) and starts the emulator. Runs automatically before `test`/`testOnly`. |
+| `stopDynoxide`    | `TaskKey[Unit]`      | —        | Stops the emulator process explicitly.                                                      |
 
 ## How it works
 
@@ -75,10 +78,10 @@ builds, so the emulator-management logic is written and tested once, not duplica
 
 ## sbt version support
 
-| sbt version | Plugin Scala | Published artifact           |
-|-------------|--------------|-------------------------------|
-| sbt 1.x     | Scala 2.12   | `sbt-dynoxide_2.12_1.0`       |
-| sbt 2.x     | Scala 3      | `sbt-dynoxide_sbt2_3`         |
+| sbt version | Plugin Scala | Published artifact      |
+|-------------|--------------|-------------------------|
+| sbt 1.x     | Scala 2.12   | `sbt-dynoxide_2.12_1.0` |
+| sbt 2.x     | Scala 3      | `sbt-dynoxide_sbt2_3`   |
 
 You always add the same `addSbtPlugin("com.hlag" % "sbt-dynoxide" % "<version>")` — sbt resolves
 the correct variant for the sbt version you're running.
