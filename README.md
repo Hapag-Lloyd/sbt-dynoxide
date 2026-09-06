@@ -3,7 +3,7 @@
 sbt plugin: manages a [Dynoxide](https://github.com/nubo-db/dynoxide) DynamoDB emulator for
 integration tests. No Docker, no JVM, no npm.
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.hlag/sbt-dynoxide.svg)](https://central.sonatype.com/artifact/com.hlag/sbt-dynoxide)
+![Maven Central](https://img.shields.io/maven-central/v/com.hlag/sbt-dynoxide_sbt2_3.svg)](https://central.sonatype.com/artifact/com.hlag/sbt-dynoxide_sbt2_3)
 [![CI](https://github.com/Hapag-Lloyd/sbt-dynoxide/actions/workflows/ci.yml/badge.svg)](https://github.com/Hapag-Lloyd/sbt-dynoxide/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![sbt](https://img.shields.io/badge/sbt-1.x%20%7C%202.x-informational)](#sbt-version-support)
