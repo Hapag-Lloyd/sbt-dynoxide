@@ -15,7 +15,8 @@ integration tests. No Docker, no JVM, no npm.
 - Caches the binary locally under `.dynoxide/<version>/` — no re-download on later runs.
 - One Dynoxide process shared across subprojects, with reference counting so the first subproject to finish doesn't kill
   it while another still needs it.
-- Automatically starts before `test`/`testOnly` and stops when the owning subproject's tests finish.
+- Automatically starts before `test`/`testOnly` and stops after, only in subprojects with the
+  plugin enabled — other subprojects never trigger it.
 - Zero runtime dependencies — the plugin only uses the sbt API and the JDK (HTTP client, zip/tar extraction, process
   control).
 
@@ -42,7 +43,8 @@ lazy val integrationTests = project
   .enablePlugins(DynoxidePlugin)
 ```
 
-Point your test code's AWS SDK v2 `DynamoDbClient` at the emulator:
+Point your test code's AWS SDK v2 `DynamoDbClient` at the emulator. This snippet is minimal —
+you'll also need dummy credentials and a region, since the SDK requires both to be present:
 
 ```scala
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
@@ -52,6 +54,9 @@ val client = DynamoDbClient.builder()
   .endpointOverride(URI.create("http://localhost:8000"))
   .build()
 ```
+
+For IDE runs (bypassing `sbt test`), start/stop the emulator yourself; the plugin only hooks
+`sbt`'s `test`/`testOnly` tasks.
 
 ## Configuration / Keys
 
