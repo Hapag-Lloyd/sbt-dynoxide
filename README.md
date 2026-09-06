@@ -58,7 +58,7 @@ val client = DynamoDbClient.builder()
 | Key               | Type                 | Default  | Description                                                                                 |
 |-------------------|----------------------|----------|---------------------------------------------------------------------------------------------|
 | `dynoxidePort`    | `SettingKey[Int]`    | `8000`   | Port the Dynoxide emulator listens on.                                                      |
-| `dynoxideVersion` | `SettingKey[String]` | `v1.0.0` | Dynoxide release version to download.                                                       |
+| `dynoxideVersion` | `SettingKey[String]` | `v1.1.0` | Dynoxide release version to download.                                                       |
 | `startDynoxide`   | `TaskKey[Unit]`      | —        | Downloads (if needed) and starts the emulator. Runs automatically before `test`/`testOnly`. |
 | `stopDynoxide`    | `TaskKey[Unit]`      | —        | Stops the emulator process explicitly.                                                      |
 
