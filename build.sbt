@@ -18,7 +18,7 @@ ThisBuild / versionScheme    := Some("early-semver")
 val scalaForSbt1 = "2.12.21"
 val scalaForSbt2 = "3.8.4"
 
-val dynoxideScalaCoreVersion = "0.8.1"
+val dynoxideScalaCoreVersion = "0.9.0"
 
 // Synced with github.com/nubo-db/dynoxide releases
 val dynoxideVersion = IO.read(file("dynoxide.version")).trim
