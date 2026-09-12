@@ -16,7 +16,7 @@ ThisBuild / versionScheme    := Some("early-semver")
 // the artifact `version` is managed by sbt-ci-release/sbt-dynver
 
 val scalaForSbt1 = "2.13.18"
-val scalaForSbt2 = "3.8.4"
+val scalaForSbt2 = "3.9.0"
 
 val dynoxideScalaCoreVersion = "0.8.1"
 
